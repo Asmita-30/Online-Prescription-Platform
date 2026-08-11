@@ -11,26 +11,24 @@ const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
-// CORS Configuration - Allow both localhost and Netlify
+// CORS Configuration - Add Netlify URL
 const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:3000",
     "https://online-prescription-platform12.netlify.app",
-    process.env.CLIENT_URL
-].filter(Boolean);
+    "https://online-prescription-platform-7kp8.onrender.com"
+];
 
 app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
         
-        if (allowedOrigins.indexOf(origin) !== -1) {
+        if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
             callback(null, true);
         } else {
-            console.log("Blocked origin:", origin);
-            callback(null, true); // Allow all origins in development
-            // For production, uncomment below:
-            // callback(new Error('Not allowed by CORS'));
+            console.log("❌ Blocked origin:", origin);
+            callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true,
@@ -38,10 +36,15 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+// OR - Allow all origins (for testing only)
+// app.use(cors({
+//     origin: "*",
+//     credentials: true
+// }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint
 app.get("/api/health", (req, res) => {
     res.json({
         success: true,
@@ -50,7 +53,7 @@ app.get("/api/health", (req, res) => {
     });
 });
 
-// Routes
+// Routes - /api prefix already added
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/doctors", doctorsRoutes);
 app.use("/api/patient", patientRoutes);
@@ -65,7 +68,6 @@ app.use((req, res) => {
     });
 });
 
-// Error handler
 app.use(errorHandler);
 
 module.exports = app;

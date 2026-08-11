@@ -1,17 +1,16 @@
 import axios from "axios";
 
-// Use environment variable or fallback to Render URL
+// IMPORTANT: URL should end with /api
 const API_URL = import.meta.env.VITE_API_URL || "https://online-prescription-platform-7kp8.onrender.com/api";
 
 const api = axios.create({
-    baseURL: API_URL,
+    baseURL: API_URL,  // This should end with /api
     headers: {
         "Content-Type": "application/json"
     },
-    timeout: 30000, // 30 seconds timeout
+    timeout: 30000,
 });
 
-// Request interceptor
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token");
@@ -27,7 +26,6 @@ api.interceptors.request.use(
     }
 );
 
-// Response interceptor
 api.interceptors.response.use(
     (response) => {
         console.log(`📥 API Response: ${response.status} ${response.config.url}`);
@@ -36,7 +34,6 @@ api.interceptors.response.use(
     (error) => {
         console.error("❌ Response Error:", error.response?.status, error.message);
         if (error.response?.status === 401) {
-            // Token expired or invalid
             localStorage.removeItem("token");
             localStorage.removeItem("user");
             window.location.href = "/";
