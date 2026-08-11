@@ -169,10 +169,10 @@ const ConsultationForm = () => {
                 consentAccepted: consentAccepted,
             };
 
-            console.log("📝 Submitting:", payload);
+            console.log("Submitting:", payload);
 
             const res = await createConsultation(payload);
-            console.log("✅ Response:", res);
+            console.log("Response:", res);
 
             setShowPayment(true);
 
@@ -182,7 +182,7 @@ const ConsultationForm = () => {
             }, 4000);
 
         } catch (err) {
-            console.error("❌ Error:", err);
+            console.error(" Error:", err);
             const msg = err.response?.data?.message || "Unable to submit consultation.";
             setErrMsg(msg);
             toast.error(msg);
