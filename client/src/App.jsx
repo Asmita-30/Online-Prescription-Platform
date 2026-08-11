@@ -4,6 +4,7 @@ import {
     Route,
     Routes
 } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import DoctorAuth from "./pages/doctor/DoctorAuth";
 import DoctorProfile from "./pages/doctor/DoctorProfile";
@@ -20,6 +21,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const App = () => {
     return (
         <BrowserRouter>
+            <Toaster position="top-right" />
             <Routes>
                 <Route path="/" element={<Navigate to="/doctor" replace />} />
 
