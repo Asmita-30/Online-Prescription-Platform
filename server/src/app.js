@@ -11,27 +11,61 @@ const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
+// CORS Configuration - Allow both localhost and Netlify
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://online-prescription-platform12.netlify.app",
+    process.env.CLIENT_URL
+].filter(Boolean);
+
 app.use(cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    credentials: true
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.log("Blocked origin:", origin);
+            callback(null, true); // Allow all origins in development
+            // For production, uncomment below:
+            // callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Health check endpoint
 app.get("/api/health", (req, res) => {
     res.json({
         success: true,
-        message: "Online Prescription API is running"
+        message: "Online Prescription API is running",
+        timestamp: new Date().toISOString()
     });
 });
 
+// Routes
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/doctors", doctorsRoutes);
 app.use("/api/patient", patientRoutes);
 app.use("/api/consultations", consultationRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: `Route ${req.originalUrl} not found`
+    });
+});
+
+// Error handler
 app.use(errorHandler);
 
 module.exports = app;
