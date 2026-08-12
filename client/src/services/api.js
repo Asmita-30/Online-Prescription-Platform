@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// IMPORTANT: URL should end with /api
+
 const API_URL = import.meta.env.VITE_API_URL || "https://online-prescription-platform-7kp8.onrender.com/api";
 
 const api = axios.create({
@@ -21,7 +21,7 @@ api.interceptors.request.use(
         return config;
     },
     (error) => {
-        console.error("❌ Request Error:", error);
+        console.error("Request Error:", error);
         return Promise.reject(error);
     }
 );
@@ -32,7 +32,7 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        console.error("❌ Response Error:", error.response?.status, error.message);
+        console.error(" Response Error:", error.response?.status, error.message);
         if (error.response?.status === 401) {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
