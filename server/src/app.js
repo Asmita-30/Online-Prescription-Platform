@@ -11,7 +11,7 @@ const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
-// CORS Configuration - Add Netlify URL
+
 const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:3000",
@@ -27,7 +27,7 @@ app.use(cors({
         if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
             callback(null, true);
         } else {
-            console.log("❌ Blocked origin:", origin);
+            console.log(" Blocked origin:", origin);
             callback(new Error('Not allowed by CORS'));
         }
     },
